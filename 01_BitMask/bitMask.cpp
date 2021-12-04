@@ -6,18 +6,121 @@ using namespace std;
 
 /*
 
-[ ë¹„íŠ¸ ë§ˆìŠ¤í¬ ]
+[ ºñÆ® ¸¶½ºÅ© ]
 
-- ì—°ì‚°ìž ìš°ì„ ìˆœìœ„ê¸° ë‚®ë‹¤ -> ê´„í˜¸ë¥¼ ì ê·¹ì ìœ¼ë¡œ ì‚¬ìš©í•˜ìž 
-- ë¶€í˜¸ë¡œ ì¸í•˜ì—¬ ë²„ê·¸ ë°œìƒ ê°€ëŠ¥ -> ë˜ë„ë¡ì´ë©´ ë¶€í˜¸ ì—†ëŠ” ìˆ˜ì— ëŒ€í•´ ì‚¬ìš©
-- 32 bit / 64 bit ì˜¤ë²„í”Œë¡œìš° ì£¼ì˜ 
+- ¿¬»êÀÚ ¿ì¼±¼øÀ§±â ³·´Ù -> °ýÈ£¸¦ Àû±ØÀûÀ¸·Î »ç¿ëÇÏÀÚ 
+- ºÎÈ£·Î ÀÎÇÏ¿© ¹ö±× ¹ß»ý °¡´É -> µÇµµ·ÏÀÌ¸é ºÎÈ£ ¾ø´Â ¼ö¿¡ ´ëÇØ »ç¿ë
+- 32 bit / 64 bit ¿À¹öÇÃ·Î¿ì ÁÖÀÇ 
 
 */
 
 
 
-// ë¹„íŠ¸ ë§ˆìŠ¤í¬ë¥¼ í™œìš©í•œ ì§‘í•©ì˜ êµ¬í˜„ 
+// ºñÆ® ¸¶½ºÅ©¸¦ È°¿ëÇÑ ÁýÇÕÀÇ ±¸Çö 
 
-int a;
-int b;
-s
+/*
+
+- 20°¡ÁöÀÇ ÅäÇÎ (0~19)
+- ÁÖ¹®½Ã ÅäÇÎÀÇ Ã·/»è °¡´É
+- ºñÆ®¸¶½ºÅ©¸¦ È°¿ëÇÏ¸é ´Ù¾çÇÑ ºñÆ® ¿¬»êÀ» ÀÌ¿ëÇØ 
+  ÁýÇÕ ¿¬»êÀ» ºü¸£°í °£´ÜÇÏ°Ô ±¸Çö °¡´ÉÇÏ´Ù. 
+
+*/
+
+
+
+
+// [ °øÁýÇÕ°ú ²Ë Âù ÁýÇÕ ]
+// °øÁýÇÕÀº »ó¼ö 0À» ÀÇ¹ÌÇÑ´Ù. 
+
+int fullPizza = (1 << 20) - 1;
+// 20°³ÀÇ ºñÆ®°¡ ¸ðµÎ ÄÑÁø ¼ö¸¦ ¾ò´Â´Ù. 
+
+
+
+
+
+
+// [ ¿ø¼ÒÀÇ Æ÷ÇÔ ¿©ºÎ È®ÀÎ ]
+int toppings;
+int p;
+
+/*
+
+if (toppings & (1 << p)) {
+	cout << "peperoni is in" << endl;
+}
+
+*/
+
+
+/*
+
+
+[ ¿ø¼ÒÀÇ »èÁ¦ ]
+
+toppings &= ~(1 << p);
+
+~(1 << p) => ÇØ´ç ºñÆ®¸¸ ²¨Áö°í ³ª¸ÓÁö´Â ´Ù ÄÑÁø ¼ýÀÚ
+
+
+*/ 
+
+
+/*
+
+
+[ ¿ø¼ÒÀÇ Åä±Û(toggle) ]
+
+
+toppings ^= (1 << p);
+-> XOR ¿¬»êÀÌ ÄÑÁø ºñÆ®¸¦ ²ô°í, 
+   ²¨Áø ºñÆ®¸¦ Å°´Â ¿ªÇÒÀ» ÇÔ
+
+
+*/
+
+
+
+
+// [ÁýÇÕÀÇ Å©±â ±¸ÇÏ±â]
+
+int bitCount(int x) {
+	if (x == 0) {
+		return 0;
+	}
+	return (x % 2 + bitCount(x / 2));
+	// Àç±Í È£Ãâ·Î 2·Î Ä¡¸é¼­ ±¸ÇÏ±â! 
+	// ÀÌÁø¼ö´Ï±î. 
+}
+
+
+
+
+/*
+
+[ÃÖ¼Ò ¿ø¼Ò Ã£±â]
+
+int firstTopping = (toppings & -toppings);
+
+
+
+[ÃÖ¼Ò ¿ø¼Ò Áö¿ì±â]
+
+toppings &= ( toppings - 1 );
+
+
+
+[¸ðµç ºÎºÐ ÁýÇÕ ¼øÈ¸ÇÏ±â]
+
+for (int subset = pizza; subset; subset = ((subset - 1) & pizza)) {
+
+	- subset ¿¡¼­ 1À» »©¸é, ÄÑÁ³´ø ÃÖÇÏÀ§ ºñÆ®°¡ ²¨Áö°í, ±× ¹ØÀÇ ºñÆ®µéÀº ÀüºÎ ÄÑÁø´Ù. 
+	- ÀÌ¿¡ ´ëÇÏ¿© pizza¿ÍÀÇ ±³ÁýÇÕ -> pizza¿¡ ¼ÓÇÏÁö ¾Ê´Â ºñÆ®µéÀº ¸ðµÎ ²¨Áø´Ù. 
+	- ÇØ´ç ¿¬»êÀ» ¹Ýº¹ÇÏ¸é, pizzaÀÇ ¸ðµç ºÎºÐ ÁýÇÕÀ» ¹æ¹®ÇÒ ¼ö ÀÖ´Ù. 
+
+
+}
+
+
+*/
