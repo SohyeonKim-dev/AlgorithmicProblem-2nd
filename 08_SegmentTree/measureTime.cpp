@@ -38,3 +38,32 @@ long long countMoves(const vector <int>& A) {
 	}
 	return ret;
 }
+
+
+// 이진 검색 (treap) 활용하여 해결하기 
+
+/*
+void deleteTree(Node* node) {
+	if (node == NULL) {
+		return;
+	}
+	deleteTree(node->left);
+	deleteTree(node->right);
+	delete node;
+}
+
+long long countMoves2(const vector <int>& A) {
+	Node* root = NULL;
+	long long ret = 0;
+	for (int i = 0; i < A.size(); ++i) {
+		ret += i - countLessThan(root, A[i] + 1);
+		root = insert(root, new Node(A[i]));
+	}
+	deleteTree(root);
+	return ret;
+}
+
+*/
+
+
+// 3. 병합 정렬을 활용한 해결도 가능하다. 
